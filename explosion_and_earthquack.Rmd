@@ -1,0 +1,82 @@
+---
+title: "Time Series Analysis"
+author: "Shantanu Neema"
+geometry: margin=1in
+fontsize: 12pt
+output:
+  pdf_document: default
+---
+
+# Problem 1.2 (SaS book)
+## Solution (a)
+
+```{r}
+s1 = c(rep(0,100), 10*exp(-(1:100)/20)*cos(2*pi*1:100/4)) 
+x1 = s1 + rnorm(200) 
+t1 <- expression("x"[t] ~ "=" ~ "s"[t] ~ "+" ~ "w"[t])
+plot.ts(x1, ylab = t1, xlab = "Time",main = "signal-plus-noise (a)") 
+mtext(expression("signal modulator = e"^(-t/20)))
+```
+ 
+Above plot for signal using given equation and white noise with $\sigma_w^2$ = 1 and $\mu$ = 0
+where signal is defined as:
+
+$s_t$ = \Big\{ 0, if t = 1,2,...,100 & 10$e^{-(\frac{t-100}{20})}$, if t = 101,...,200
+
+## Solution (b)
+
+```{r}
+s2 = c(rep(0,100), 10*exp(-(1:100)/200)*cos(2*pi*1:100/4)) 
+x2 = s2 + rnorm(200) 
+t2 <- expression("x"[t] ~ "=" ~ "s"[t] ~ "+" ~ "w"[t])
+plot.ts(x2, ylab = t2, xlab = "Time",main = "signal-plus-noise (b)") 
+mtext(expression("signal modulator = e"^(-t/200)))
+```
+
+Above plot for signal using given equation and white noise with $\sigma_w^2$ = 1 and $\mu$ = 0
+where signal is defined as:
+
+$s_t$ = \Big\{ 0, if t = 1,2,...,100 & 10$e^{-(\frac{t-100}{200})}$, if t = 101,...,200
+
+\clearpage
+
+## Solution (c)
+
+Below plots shows the series (a) generated with signal modulator as $e^{(-t/20)}$ and Explosion series. The series (a) is more similar to Explosion as there is fairly low noise from \textit{t = 0 to 100} and then a jerk in the series which quickly dies down like an explosion. 
+
+```{r}
+library('astsa')
+op <- par(mfrow = c(2,1),
+          oma = c(5,4,1,1) + 1,
+          mar = c(1,1,1,1) + 1)
+plot.ts(x1, ylab = t1, xlab = "Time",main = "signal-plus-noise (a)") 
+plot(EXP6, main="Explosion", xlab = "Time", ylab = "EXP6")
+```
+
+\clearpage
+
+Below plots shows the series (b) generated with signal modulator as $e^{(-t/200)}$ and Earthquack series. The series (b) is more similar to Earthquack as there is fairly low noise from \textit{t = 0 to 100} and then a jerk in the series which slowly dies down like an earthquack. 
+
+```{r}
+library('astsa')
+op <- par(mfrow = c(2,1),
+          oma = c(5,4,1,1) + 1,
+          mar = c(1,1,1,1) + 1)
+plot.ts(x2, ylab = t2, xlab = "Time",main = "signal-plus-noise (b)") 
+plot(EQ5, main="Earthquake", xlab = "Time", ylab = "EQ5")
+```
+
+\clearpage
+
+Signal modulators for both part (a) and part (b) are plotted below. The signal modulator shows the fact that the noise will die quickly in series (a) as the decrease is rapid and will die slowly in series (b) as the decrease is slow.
+```{r}
+par(mfrow=c(2,1))
+plot.ts(exp(-(1:100)/20),ylab = "",
+        main=expression("signal modulator = e"^(-t/20)))
+plot.ts(exp(-(1:100)/200),ylab = "",
+        main=expression("signal modulator = e"^(-t/200)))
+```
+
+
+
+
