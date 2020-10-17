@@ -1,0 +1,74 @@
+---
+title: "HW2-Time Series Analysis"
+author: "Shantanu Neema"
+output:
+  pdf_document: default
+geometry: margin=1in
+fontsize: 12pt
+---
+## Problem 1.5 (SaS book)
+\textbf{Solution (a)}
+
+for t = 1,2,3,...,100, $\mathbb{E}(x_t) = \mu_t = 0$ and 
+
+for t = 101,102,...,200,
+$\mathbb{E}(x_t) = \mathbb{E}[10e^{-\frac{t-100}{20}}cos(\frac{2{\pi}t)}{4}) + w_t]$
+
+or, $\mu_{t} = 10e^{-\frac{t-100}{20}}cos(\frac{2{\pi}t}{4})+\mathbb{E}[w_t] = 10e^{-\frac{t-100}{20}}cos(\frac{2{\pi}t}{4})$, where $\mathbb{E}(w_t) = 0$
+
+Following are the R codes to plot the mean of the given function for both signal modular
+
+```{r}
+mu1 <- c(rep(0,100),10*exp(-(1:100)/20)*cos(2*pi*1:100/4))
+t1 <- expression(mu[t] ~ "=" ~ "s"[t])
+plot.ts(mu1, ylab = t1, xlab = "Time",main = "Mean Signal (Series 1)") 
+mtext(expression("w/ signal modulator = e"^(-t/20)))
+
+mu2 <- c(rep(0,100),10*exp(-(1:100)/200)*cos(2*pi*1:100/4))
+t2 <- expression(mu[t] ~ "=" ~ "s"[t])
+plot.ts(mu2, ylab = t2, xlab = "Time",main = "Mean Signal (Series 2)") 
+mtext(expression("w/ signal modulator = e"^(-t/200)))
+
+```
+Above plots shows that both series mean is just the given combination of exponential and cosine function for t = 101,102,...,200
+
+\bigskip
+\textbf{Solution (b)}
+
+The lack of two adjacent values $x_t$ and $x_s$ can be assessed using autocovariance function which measures the linear dependence between two points on the same series observed at different times. Autocorrelation function is defined as:
+
+$\gamma_{x}(s,t) = cov(x_s,x_t)=\mathbb{E}[(x_s-\mu_s)(x_t-\mu_t)]$
+
+and for $s = t$, the autocovariance reduces to $\gamma_{x}(t,t) = \mathbb{E}[(x_t-\mu_t)^2] = \sigma_w^2 = 1$
+
+\clearpage
+Following R codes will generate the sameple ACF and ACF values for series 1
+
+(i.e. with signal modulator = $e^{-t/20}$)
+```{r}
+s1 = c(rep(0,100), 10*exp(-(1:100)/20)*cos(2*pi*1:100/4)) 
+x1 = s1 + rnorm(200) 
+acf1 <- acf(x1,type = "covariance",main="Autocorrelation Function",
+            ylab = "ACF(x"[t] ~ ")")
+mtext(expression("series w/ signal modulator = e"^(-t/20)))
+cat("acf values are:","\n")
+sprintf("%0.3f",t(as.matrix(acf1$acf)))
+```
+
+\clearpage
+Following R codes will generate the sameple ACF and ACF values for series 2
+
+(i.e. with signal modulator = $e^{-t/200}$)
+```{r}
+s2 = c(rep(0,100), 10*exp(-(1:100)/200)*cos(2*pi*1:100/4)) 
+x2 = s2 + rnorm(200) 
+acf2 <- acf(x2,type = "covariance",main="Autocorrelation Function",
+            ylab = "ACF(x"[t] ~ ")")
+mtext(expression("series w/ signal modulator = e"^(-t/200)))
+cat("acf values are:","\n")
+sprintf("%0.3f",t(as.matrix(acf2$acf)))
+```
+
+
+
+
