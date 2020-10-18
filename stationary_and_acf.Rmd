@@ -1,0 +1,101 @@
+---
+title: "Time Series Analysis"
+author: "Shantanu Neema"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+\textbf{\large{Solution 1.9}}
+
+The given time series to be checked for weak stationarity is:
+$$
+x_t = U_{1}sin(2\pi\omega_0t)+U_{2}cos(2\pi\omega_0t)
+$$
+
+where $U_1$ and $U_2$ are independent random variables with zero means and $E(U_{1}^2) = E(U_{1}^2) = \sigma^2$ 
+
+Let's check the mean of the function for the stationarity:
+
+$$
+\begin{aligned}
+\mu_t &= \mathbb{E}[x_t] = \mathbb{E}[U_{1}sin(2\pi\omega_0t)+U_{2}cos(2\pi\omega_0t)]\\
+&=sin(2\pi\omega_0t)\mathbb{E}[U_{1}]+cos(2\pi\omega_0t)\mathbb{E}[U_{2}]
+\end{aligned}
+$$
+
+Since, means of $U_1$ and $U_2$ are zero,
+
+$$
+\begin{aligned}
+\mu_t &= 0
+\end{aligned}
+$$
+
+Let's check the autocovariance of the given function:
+
+$$
+\begin{aligned}
+\gamma_{x}(t,t+h) &= cov(x_t,x_{t+h}) \\
+&= cov(U_{1}sin(2\pi\omega_0t)+U_{2}cos(2\pi\omega_0t),U_{1}sin(2\pi\omega_0(t+h))+U_{2}cos(2\pi\omega_0(t+h)))\\
+&= sin(2\pi\omega_0t)sin(2\pi\omega_0(t+h))cov(U_1,U_1) + cos(2\pi\omega_0t)cos(2\pi\omega_0(t+h))cov(U_2,U_2)\\
+&+ sin(2\pi\omega_0t)cos(2\pi\omega_0(t+h))cov(U_1,U_2) + cos(2\pi\omega_0t)sin(2\pi\omega_0(t+h))cov(U_2,U_1)\\
+\end{aligned}
+$$
+where, $cov(U_1,U_2) = cov(U_2,U_1) = 0$; and $cov(U_1,U_1) = cov(U_2,U_2) = \sigma^2$
+$$
+\begin{aligned}
+\gamma_{x}(t,t+h) &= \sigma^2[sin(2\pi\omega_0t)sin(2\pi\omega_0(t+h)) + cos(2\pi\omega_0t)cos(2\pi\omega_0(t+h))] \\
+&= \sigma^2[cos(2\pi\omega_0(t+h)-2\pi\omega_0t)] \\
+&= \sigma^2cos(2\pi\omega_0h)
+\end{aligned}
+$$
+Above results suggest the following:
+\begin{enumerate}
+\item The mean value $\mu_t$ of the given function constant (= 0) and is independent of the time
+\item The autocovariance function $\gamma(s,t)$ is independent of time and depends only on the difference of |s - t| (i.e. the lag h)
+\end{enumerate}
+
+Above 2 criteria suggest that the given series is \textbf{weakly stationary} type time series and the autocovariance function is given by $\sigma^2cos(2\pi\omega_0h)$
+
+\newpage
+## Simulation 
+
+Below are the definition of terms U1 & U2. It is known that U1 & U2 are independent random variables with mean = 0 and  sd = sigma
+
+For sd = 1,
+
+```{r}
+sig <- 1
+U1 <- rnorm(1,0,sig)
+U2 <- rnorm(1,0,sig)
+```
+
+Choose sample size n=50 and gradually increase the sample size n from 50 to 5000. Define omega as less than 1/2 keeping denominator a multiple of 2 to ensure completion of at least 1 cycle. 
+
+```{r}
+omg <- 1/20
+sig <- 1
+U1 <- rnorm(1,0,sig) 
+U2 <- rnorm(1,0,sig)
+N <- c(50,250,1000,5000)
+par(mfrow=c(2,2),mar=c(1,1,2,1)+0.1)
+count <- 1
+for (I in N) {
+  t <- 0:I
+  
+  Xt <- U1*sin(2*pi*omg*t) + U2*cos(2*pi*omg*t)
+  
+  # Plot the acf function
+  ACF_Xt <- acf(Xt,lag.max=50,main="")
+  mtext(paste("Sample Size:",I))
+  Calc_ACF <- acf(Xt,plot=FALSE,lag.max=51)$acf
+  
+  # True Results
+  True_ACF <- (sig^2)*cos(2*pi*omg*(0:I))
+  lines(0:I,True_ACF,col='blue')
+}
+par(mfrow=c(1,1))
+``` 
+
+From above plots, it can be concluded that the larger the sample size the closer to the true Autocorrelation function.
