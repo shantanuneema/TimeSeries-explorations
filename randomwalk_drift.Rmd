@@ -1,0 +1,48 @@
+---
+title: "Solution to Problem 2.3 (SaS Book)"
+author: "Shantanu Neema"
+output: pdf_document
+---
+# Solution (a) 
+
+To generate four series that are random walk with drift, of length $n=100$ with $\delta=0.01$ and $\sigma_w=1$, following R codes are used
+
+```{r}
+n <- 100; delta <- 0.01; sigma <- 1
+par(mfrow=c(2,2),mar=c(2.5,2.5,1,1)+0.1)
+for (I in 1:4) {
+  x <- ts(cumsum(rnorm(n,delta,sigma)))
+  regx <- lm(x~0+time(x),na.action=NULL)
+  plot(x,ylab="")
+  abline(a=0,b=delta,col=2,lty=2); abline(regx,col=4)
+}
+```
+In above plot, blue line shows the fitted regression line and dotted red lines shows the true mean.
+
+# Solution (b)
+
+To generate four series that are linear trend with noise, of length $n=100$ with $slope=0.01$ and white noise $w_t$ given by $\mu=0$ \& $\sigma^2=1$, following R codes are used
+
+```{r}
+m <- 100; slp <- 0.01
+par(mfrow=c(2,2),mar=c(2.5,2.5,1,1)+0.1)
+for (I in 1:4) {
+  y <- slp*(1:m) + rnorm(m)
+  regy <- lm(y~0+time(y),na.action=NULL)
+  plot(y,ylab="",type='l')
+  abline(a=0,b=slp,col=2,lty=2); abline(regy,col=4)
+}
+```
+In above plot, blue line shows the fitted regression line and dotted red lines shows the true mean.
+
+# Solution (c)
+
+In part (a), since the drift is very low the random walk with drift series visually looks very similar to random walk series. Additionally, there is a big differece between the true mean vs fitted regression equation which can be either positive, negative or along with true mean depending on the random numbers generated. Part (b) does not seem to have same affect, all of the four series in shows a closeness between true mean and slope of regression equation. Both of them exibits a trend due to the temporal component.
+
+
+
+
+
+
+
+
